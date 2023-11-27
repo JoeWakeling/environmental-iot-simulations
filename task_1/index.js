@@ -51,12 +51,18 @@ function generateSensors(baseSensor) {
 module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
 
-    // Generate weather data then use it to generate simulated sensor data
-    let weatherData = generateWeatherData();
-    let sensors = generateSensors(weatherData);
+    let numGenerations = parseInt(req.query.num_generations);
+    let generations = [];
+
+    // Generate numGenerations sets of sensor data
+    for (let i = 0; i < numGenerations; i++) {
+        // Generate weather data then use it to generate simulated sensor data
+        let weatherData = generateWeatherData();
+        let sensors = generateSensors(weatherData);
+        generations.push(sensors);
+    }
 
     context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: sensors
+        body: generations
     };
 }
