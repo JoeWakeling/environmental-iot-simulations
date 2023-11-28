@@ -14,6 +14,13 @@
       "type": "http",
       "direction": "out",
       "name": "res"
+    },
+    {
+      "name": "simulatedData",
+      "type": "sql",
+      "direction": "out",
+      "commandText": "dbo.SimulatedData",
+      "connectionStringSetting": "SQLConnectionString"
     }
   ]
 }

@@ -27,9 +27,9 @@ function getRandomNumber(min, max) {
 function generateWeatherData() {
     return {
         temperature: getRandomNumber(MIN_TEMP + VARIATION_TEMP, MAX_TEMP - VARIATION_TEMP),
-        windSpeed: getRandomNumber(MIN_WIND_SPEED + VARIATION_WIND_SPEED, MAX_WIND_SPEED - VARIATION_WIND_SPEED),
-        humidity: getRandomNumber(MIN_HUMIDITY + VARIATION_HUMIDITY, MAX_HUMIDITY - VARIATION_HUMIDITY),
-        c02: getRandomNumber(MIN_C02 + VARIATION_C02, MAX_C02 - VARIATION_C02),
+        wind_speed: getRandomNumber(MIN_WIND_SPEED + VARIATION_WIND_SPEED, MAX_WIND_SPEED - VARIATION_WIND_SPEED),
+        relative_humidity: getRandomNumber(MIN_HUMIDITY + VARIATION_HUMIDITY, MAX_HUMIDITY - VARIATION_HUMIDITY),
+        co2: getRandomNumber(MIN_C02 + VARIATION_C02, MAX_C02 - VARIATION_C02),
     };
 }
 
@@ -38,31 +38,24 @@ function generateSensors(baseSensor) {
     let sensors = [];
     for (let i = 0; i < NUM_SENSORS; i++) {
         sensors.push({
-            sensorID: i+1,
+            sensor_id: i+1,
             temperature: baseSensor.temperature + getRandomNumber(-VARIATION_TEMP, VARIATION_TEMP),
-            windSpeed: baseSensor.windSpeed + getRandomNumber(-VARIATION_WIND_SPEED, VARIATION_WIND_SPEED),
-            humidity: baseSensor.humidity + getRandomNumber(-VARIATION_HUMIDITY, VARIATION_HUMIDITY),
-            c02: baseSensor.c02 + getRandomNumber(-VARIATION_C02, VARIATION_C02),
+            wind_speed: baseSensor.wind_speed + getRandomNumber(-VARIATION_WIND_SPEED, VARIATION_WIND_SPEED),
+            relative_humidity: baseSensor.relative_humidity + getRandomNumber(-VARIATION_HUMIDITY, VARIATION_HUMIDITY),
+            co2: baseSensor.co2 + getRandomNumber(-VARIATION_C02, VARIATION_C02),
         });
     }
     return sensors;
 }
 
 module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
-
-    let numGenerations = parseInt(req.query.num_generations);
-    let generations = [];
-
-    // Generate numGenerations sets of sensor data
-    for (let i = 0; i < numGenerations; i++) {
-        // Generate weather data then use it to generate simulated sensor data
-        let weatherData = generateWeatherData();
-        let sensors = generateSensors(weatherData);
-        generations.push(sensors);
-    }
-
+    // Generate some random weather data
+    let weatherData = generateWeatherData();
+    // Then use it to generate data for 20 sensors by adding some variaiton & write to azure sql db
+    context.bindings.simulatedData = generateSensors(weatherData);
+    // Response message
     context.res = {
-        body: generations
+        status: 200,
+        body: "Data generated & written to db successfully"
     };
 }
