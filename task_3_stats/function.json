@@ -1,19 +1,11 @@
 {
   "bindings": [
     {
-      "authLevel": "function",
-      "type": "httpTrigger",
+      "name": "simulatedDataChanges",
+      "type": "sqlTrigger",
       "direction": "in",
-      "name": "req",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "type": "http",
-      "direction": "out",
-      "name": "res"
+      "tableName": "dbo.SimulatedData",
+      "connectionStringSetting": "SqlConnectionString"
     },
     {
       "name": "simulatedData",
